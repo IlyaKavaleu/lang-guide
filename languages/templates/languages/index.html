@@ -1,0 +1,84 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link href="https://fonts.cdnfonts.com/css/robot" rel="stylesheet">
+    <script type="text/javascript">
+        const allImages = [
+            { src: "{% static 'image/Python.png' %}", caption: 'Ты изучишь основы самого популярного языка в мире!', width: 450, height: 450 },
+            { src: "{% static 'image/SQL.png' %}", caption: 'Освоишь в совершенстве базы данных!', width: 450, height: 450 },
+            { src: "{% static 'image/GOLang.png' %}", caption: 'После изучения Python сделаешь следующий шаг вместе с GOLang!', width: 450, height: 450 },
+            { src: "{% static 'image/RubyLanguage.png' %}", caption: 'Будешь разрабатывать крутые веб-приложения!', width: 450, height: 450 },
+            { src: "{% static 'image/JavaLanguage.png' %}", caption: 'Научишься писать промышленные программы, а также программы под Android!', width: 450, height: 450 },
+            { src: "{% static 'image/C++.png' %}", caption: 'Сделаешь первые шаги к разработке игр!', width: 450, height: 450 },
+            { src: "{% static 'image/PHP.png' %}", caption: 'Познакомишься с внутренней кухней легендарного языка!', width: 450, height: 450 },
+            { src: "{% static 'image/JS.png' %}", caption: 'Станешь востребованным фронтендером!', width: 450, height: 450 },
+        ];
+
+        let imgNum = 0;
+        const imgLength = allImages.length - 1;
+        const delay = 5000;
+        let run;
+
+        function chgImg(direction) {
+            imgNum += direction;
+            if (imgNum > imgLength) {
+                imgNum = 0;
+            }
+            if (imgNum < 0) {
+                imgNum = imgLength;
+            }
+            const slideShow = document.getElementById('slideShow');
+            const caption = document.getElementById('caption');
+            slideShow.style.opacity = 0;
+            setTimeout(() => {
+                slideShow.src = allImages[imgNum].src;
+                slideShow.style.width = `${allImages[imgNum].width}px`;
+                slideShow.style.height = `${allImages[imgNum].height}px`;
+                caption.innerText = allImages[imgNum].caption;
+                slideShow.style.opacity = 1;
+            }, 1000);
+        }
+
+        function auto() {
+            if (run) {
+                clearInterval(run);
+                run = null;
+            } else {
+                run = setInterval(() => chgImg(1), delay);
+            }
+        }
+    </script>
+</head>
+
+<body style="background-image: url('static/image/super_font.jpg');">
+    <div style="margin-top: 30px; margin-right: 50px; text-align: right;">
+        <img src="{% static 'image/Python.png' %}" id="slideShow" alt="Slide Show">
+        <div class="blinking-text" style="text-align: right; margin-right: 70px;">
+            <div id="caption" style="font-size: 38px; font-family: 'Source Code Pro', monospace; text-shadow: 10px 10px 10px black;">
+                Ты изучешь основы самого популярного языка в мире - Python!
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        auto();
+    </script>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Закрываем div -->
+    </body>
+</html>
+{% endblock content %}
+
+<footer style="background-color: black; padding: 20px;">
+    <p>&copy; 2023 Your Website Name</p>
+</footer>

@@ -1,0 +1,209 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Уроки по {{ chapters.first.lesson.title }}</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/readmore-js@3.0.9/readmore.min.js"></script>
+
+    <style>
+        body {
+            background-image: url('/static/image/super_font.jpg');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .chapter-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid black;
+            box-shadow: 2px 2px 5px rgba(2, 2, 2, 0.2);
+            margin-bottom: 20px;
+            padding: 10px; /* Уменьшил отступы для более компактного вида */
+            display: flex; /* Добавил flex для реализации горизонтального размещения блоков */
+            align-items: center; /* Выровнял блоки по вертикали */
+        }
+
+        .lesson-title {
+            color: black;
+        }
+
+        .text-container {
+            flex: 1; /* Добавил flex для того, чтобы текст занимал всю доступную ширину */
+            max-height: 250px; /* Уменьшил максимальную высоту блока текста */
+            overflow: hidden;
+            margin-right: 10px; /* Добавил отступ справа для разделения текста и видео */
+        }
+
+        .description-container {
+            color: black;
+        }
+
+        .read-more {
+            cursor: pointer;
+            color: #3498db;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .video-container {
+            width: 500px; /* Изменил ширину видео */
+            height: auto; /* Изменил высоту на 'auto' для сохранения пропорций видео */
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+        .container {
+        display: flex;
+        justify-content: flex-end;
+        padding: 20px;
+        background-color: none;
+    }
+
+    .add-course {
+        text-decoration: none;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+    }
+
+     .custom-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #4CAF50; /* Здесь можно использовать любой цвет для фона */
+        color: white; /* Цвет текста */
+        border-radius: 5px; /* Закругление углов */
+        border: none;
+        cursor: pointer;
+    }
+
+    .custom-button:hover {
+        background-color: #45a049; /* Измененный цвет фона при наведении */
+    }
+
+    </style>
+</head>
+
+<body>
+    <div style="text-align: center;">
+        <div class="container">
+            {% if lesson.teacher == request.user %}
+                <span style="text-align: left;">
+                    <span style="text-align: left;"><a class="add-course" style="text-align: center;" href="{% url 'paid_lessons:add_chapter' lesson.id %}">Добавить урок</a></span>
+                </span>
+            {% endif %}
+        </div>
+        <h1 style="color: white;">Уроки по {{ lesson.title }}</h1>
+        {% if not is_purchased %}
+            {% for chapter in chapters|slice:2 %}
+                <div class="chapter-container">
+                    <div class="text-container" id="textContainer{{ chapter.id }}" style="margin-bottom: 40px;">
+                        <h2 class="leszson-title">Название раздела: <strong>{{ chapter.title }}</strong></h2>
+                        <p class="lesson-duration">Время урока: <strong>{{ chapter.duration }}</strong></p>
+                        <div class="description-container" id="description{{ chapter.id }}" data-full-description="{{ chapter.description|escapejs }}">
+                            <span class="short-description">{{ chapter.description|slice:"100" }}...</span>
+                            {% if chapter.description|length > 100 %}
+                                <span class="full-description" style="display: none;">{{ chapter.description|safe }}</span>
+                                <span class="read-more" onclick="toggleDescription({{ chapter.id }})">Читать полное описание</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="video-container">
+                        {% if chapter.video_url %}
+                            <h3 style="color: black;">Урок</h3>
+                            <video width="100%" height="100%" controls>
+                                <source src="{{ chapter.video_url.url }}" type="video/mp4">
+                                Ваш браузер не поддерживает тег видео.
+                            </video>
+                        {% else %}
+                            <p>No video file associated with this chapter.</p>
+                        {% endif %}
+                        {% if lesson.teacher == request.user %}
+                            <span><a style="text-align: center;" href="{% url 'paid_lessons:edit_paid_chapter' chapter.id %}">Редактировать материал</a></span>
+                            <span style="margin-left: 2px;"><a href="{% url 'paid_lessons:delete_chapter' chapter.id %}">Удалить урок</a></span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else  %}
+            {% for chapter in chapters %}
+                <div class="chapter-container">
+                        <div class="text-container" id="textContainer{{ chapter.id }}" style="margin-bottom: 40px;">
+                            <h2 class="leszson-title">Название раздела: <strong>{{ chapter.title }}</strong></h2>
+                            <p class="lesson-duration">Время урока: <strong>{{ chapter.duration }}</strong></p>
+                            <div class="description-container" id="description{{ chapter.id }}" data-full-description="{{ chapter.description|escapejs }}">
+                                <span class="short-description">{{ chapter.description|slice:"100" }}...</span>
+                                {% if chapter.description|length > 100 %}
+                                    <span class="full-description" style="display: none;">{{ chapter.description|safe }}</span>
+                                    <span class="read-more" onclick="toggleDescription({{ chapter.id }})">Читать полное описание</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="video-container">
+                            {% if chapter.video_url %}
+                                <h3 style="color: black;">Урок</h3>
+                                <video width="100%" height="100%" controls>
+                                    <source src="{{ chapter.video_url.url }}" type="video/mp4">
+                                    Ваш браузер не поддерживает тег видео.
+                                </video>
+                            {% else %}
+                                <p>No video file associated with this chapter.</p>
+                            {% endif %}
+                            {% if lesson.teacher == request.user %}
+                                <span><a style="text-align: center;" href="{% url 'paid_lessons:edit_paid_chapter' chapter.id %}">Редактировать материал</a></span>
+                                <span style="margin-left: 2px;"><a href="{% url 'paid_lessons:delete_chapter' chapter.id %}">Удалить урок</a></span>
+                            {% endif %}
+                        </div>
+                    </div>
+            {% endfor %}
+        {% endif %}
+
+        <div style="text-align: center;">
+            {% if not is_purchase %}
+                <p><strong>Купи курс чтобы открыловь всё обучение</strong></p>
+            {% endif %}
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <a style="color: white;" href="{% url 'paid_card:add_to_paid_card' lesson.id %}"><strong>Добавить в корзину</strong></a>
+    </div>
+
+    <script>
+        function toggleDescription(chapterId) {
+            var descriptionContainer = $('#description' + chapterId);
+            var fullDescription = descriptionContainer.data('full-description');
+
+            if (descriptionContainer.hasClass('full-description')) {
+                descriptionContainer.removeClass('full-description');
+                descriptionContainer.find('.short-description').show();
+                descriptionContainer.find('.full-description').hide();
+                descriptionContainer.find('.read-more').text('Читать полное описание');
+            } else {
+                descriptionContainer.addClass('full-description');
+                descriptionContainer.find('.short-description').hide();
+                descriptionContainer.find('.full-description').show();
+                descriptionContainer.find('.read-more').text('Скрыть описание');
+            }
+        }
+    </script>
+</body>
+</html>
+<br>
+<br>
+<br>
+<br>
+{% endblock content %}

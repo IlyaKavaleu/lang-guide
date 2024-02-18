@@ -1,0 +1,131 @@
+{% load static %}
+{% if user.is_superuser or user.is_staff %}
+<style>
+    .settings-container {
+        position: fixed;
+        top: 100px;
+        right: 10px;
+        background-color: #3498db;
+        border-radius: 10px;
+        padding: 4px;
+    }
+
+    .settings-menu {
+        text-align: right;
+    }
+
+    .settings-menu-btn {
+        padding: 8px 12px;
+        text-decoration: none;
+        display: block;
+        color: #fff;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .settings-menu-btn:hover {
+        color: #eee;
+    }
+
+    .settings-menu-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 120px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        border-radius: 4px;
+        right: 0;
+    }
+
+    .settings-menu-content a {
+        padding: 8px 12px;
+        text-decoration: none;
+        display: block;
+        color: #333;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .settings-menu-content a:hover {
+        background-color: #ddd;
+    }
+
+    .settings-menu:hover .settings-menu-content {
+        display: block;
+    }
+
+    .modal {
+        display: none;
+    }
+
+    .modal button {
+        padding: 8px 12px;
+        margin-right: 8px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .modal button[type="submit"] {
+        background-color: #2ecc71;
+        color: #fff;
+    }
+
+    .modal button[type="submit"]:hover {
+        background-color: #27ae60;
+    }
+
+    .modal button[type="button"] {
+        background-color: #3498db;
+        color: #fff;
+    }
+
+    .modal button[type="button"]:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+<div class="settings-container">
+    <div class="settings-menu">
+        <div class="settings-menu-btn">Настройки</div>
+        <div class="settings-menu-content">
+            <a href="{% url 'languages:new_category' %}" class="menu-item">Новая категория</a>
+            <div class="menu-item" onclick="openModal()">Удалить категорию</div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="deleteModal" style="font-size: 14px; font-family: 'Source Code Pro', monospace; text-shadow: 1px 1px 1px black; text-align: right;">
+    <p>Выберите категорию для удаления:</p>
+    <form method="post" action="{% url 'languages:delete_with_choose_category' %}">
+        {% csrf_token %}
+        <select name="category_id" id="categorySelect">
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="selected_category_id" id="selectedCategoryId">
+        <button type="submit" onclick="setSelectedCategoryId()">Удалить</button>
+        <button type="button" onclick="closeModal()">Отмена</button>
+    </form>
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    function setSelectedCategoryId() {
+        var selectedCategory = document.getElementById('categorySelect').value;
+        document.getElementById('selectedCategoryId').value = selectedCategory;
+    }
+</script>
+{% else %}
+{% endif %}

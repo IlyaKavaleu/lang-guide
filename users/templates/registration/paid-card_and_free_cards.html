@@ -1,0 +1,159 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <style>
+        body {
+            text-align: center; /* Центрируем содержимое */
+            background-color: #f8f8f8; /* Цвет фона */
+        }
+
+        .block-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px auto; /* Центрируем блоки */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 35%; /* Установим максимальную ширину */
+            display: inline-block; /* Размещаем блоки в одну линию */
+            vertical-align: top; /* Выравнивание блоков по верхнему краю */
+            margin-right: 20px; /* Добавляем отступ между блоками */
+            border-radius: 10px; /* Закругляем углы блока */
+            overflow: hidden; /* Скрываем все, что выходит за пределы блока */
+        }
+
+        .block-container h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em; /* Увеличиваем размер шрифта */
+            padding: 10px 0; /* Добавляем отступы для заголовка */
+            background: linear-gradient(to right, #4CAF50, #2196F3); /* Добавляем градиент для верхней части блока */
+            color: white; /* Цвет текста заголовка */
+            border-radius: 10px 10px 0 0; /* Закругляем углы только верхней части блока */
+        }
+
+
+
+
+    .block-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.item-content {
+    display: flex;
+    align-items: center;
+}
+
+.item-content img {
+    margin-right: 10px;
+}
+
+.text-container {
+    text-align: left;
+}
+
+.instruction-text {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.category-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.category-link:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+
+        .block-item a {
+            color: #007bff; /* Цвет ссылок */
+            text-decoration: none; /* Убираем подчеркивание ссылок */
+        }
+
+        .block-item a:hover {
+            text-decoration: underline; /* Подчеркиваем ссылки при наведении */
+        }
+
+        .block-item img {
+            max-width: 100%; /* Устанавливаем максимальную ширину для изображений */
+            border-radius: 5px; /* Закругляем углы изображений */
+            margin-bottom: 10px; /* Добавляем отступ после изображений */
+        }
+
+        .pay-link {
+            display: block;
+            background-color: #007bff; /* Цвет фона кнопки оплаты */
+            color: #fff; /* Цвет текста кнопки оплаты */
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .pay-link:hover {
+            background-color: #0056b3; /* Измененный цвет фона при наведении на кнопку оплаты */
+        }
+    </style>
+</head>
+<body style="background: url('/static/image/space.jpg') no-repeat center center fixed; background-size: cover;">
+    {% if baskets %}
+        <div class="block-container">
+            <h2>Бесплатная корзина</h2>
+            {% for basket in baskets %}
+            <a href="{% url 'languages:category' basket.category.id %}" class="category-link">
+                 <div class="block-item">
+                    <div class="item-content">
+                        <img src="{% static 'image/arrow.png' %}" alt="Arrow Icon" width="20px" height="20px">
+                        <div class="text-container">
+                            <span style="color: white;" class="instruction-text"><strong>Приступи к обучению по {{ basket.category.name }}</strong></span>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+    <p style="color: white;"><strong>Ваша бесплатная корзина пуста.
+        Перейходи по ссылке чтобы добавить курс и начать обучение <a href="{% url 'languages:categories' %}">Перейти</a></strong></p>
+    {% endif %}
+
+    {% if paid_cards %}
+        <div class="block-container">
+            <h2>Моя платная корзина</h2>
+            {% for paid_card in paid_cards %}
+                <div class="block-item" style="color: white;">
+                    <div>Курс: {{ paid_card.paid_lesson.title }}</div>
+                    <div>Цена: {{ paid_card.paid_lesson.price }}</div>
+                    <div>Учитель: {{ paid_card.paid_lesson.teacher }}</div>
+                </div>
+                <p><a style="color: white;" href="{% url 'paid_card:delete_paid_card' paid_card.id %}">Удалить</a></p>
+            {% endfor %}
+            <a class="pay-link" href="{% url 'orders:order_create' %}">Оплатить</a>
+        </div>
+    {% else %}
+    <p style="color: white;"><strong>Ваша платная корзина пуста.
+        Перейходи по ссылке чтобы добавить курс и начать обучение <a href="{% url 'paid_lessons:all_paid_lessons' %}">Перейти</a> </strong></p>
+    {% endif %}
+
+</body>
+</html>
+{% endblock content %}

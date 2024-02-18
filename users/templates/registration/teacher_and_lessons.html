@@ -1,0 +1,129 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .lesson-block {
+        background-color: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 10px;
+        border-radius: 10px;
+        position: relative;
+        width: 320px;  /* Укажите желаемую ширину блока */
+        height: 540px;
+    }
+
+    .delete-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .container {
+        display: flex;
+        justify-content: flex-end;
+        padding: 20px;
+        background-color: none;
+    }
+
+    .add-course {
+        text-decoration: none;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+    }
+
+     .custom-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #4CAF50; /* Здесь можно использовать любой цвет для фона */
+        color: white; /* Цвет текста */
+        border-radius: 5px; /* Закругление углов */
+        border: none;
+        cursor: pointer;
+    }
+
+    .custom-button:hover {
+        background-color: #45a049; /* Измененный цвет фона при наведении */
+    }
+
+    #styled-block {
+            max-width: 700px;
+            background-color: white;
+            text-align: center;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        #styled-block.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h3 {
+            color: black;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+</style>
+<body style="background-image: url('/static/image/super_font.jpg');">
+    <div style="text-align: center; margin-top: 20px; color: white;">
+        <h1>Курсы которые предлагает {{ user.first_name }} {{ user.last_name }}</h1>
+    </div>
+    <div id="styled-block">
+    <h3>{{ user.opening_speech }}</h3>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#styled-block").addClass("show");
+    });
+</script>
+
+
+
+<div style="text-align: center;">
+    {% for paid_lesson in paid_lessons %}
+        <div class="lesson-block">
+            <h2>{{ paid_lesson.title }}</h2>
+            <p><strong>Description:</strong> {{ paid_lesson.description }}</p>
+            <p><strong>Price:</strong> ${{ paid_lesson.price }}</p>
+            <p><strong>Duration:</strong> {{ paid_lesson.duration }}</p>
+
+            {% if paid_lesson.video_url %}
+                <video width="320" height="240" controls>
+                    <source src="{{ lesson.video_url.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% else %}
+                <p>No video file associated with this lesson.</p>
+            {% endif %}
+            <p>Хочешь ознакомиться с данным курсом переходи по ссылке</p>
+            <p>Переходи по ссылке</p>
+            <a href="{% url 'paid_lessons:show_lesson' paid_lesson.id %}">Посмотреть</a>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>
+<br>
+<br>
+<br>
+{% endblock content %}

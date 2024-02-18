@@ -1,0 +1,88 @@
+
+{% extends 'languages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            background-image: url('{% static 'image/super_font_2.jpg' %}')
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin-top: -100px;
+            animation: shake 2s infinite; /* 2.5s дрожания + 3s пауза = 5.5s цикл, 6s для возможности отображения начального состояния */
+            animation-timing-function: ease-in-out;
+        }
+
+        .login {
+            background-color: #eaf2ff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login h2 {
+            color: #333;
+        }
+
+        .login p {
+            color: #555;
+        }
+
+        .login form {
+            margin-top: 20px;
+        }
+
+        .login input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <div class="login-container">
+        <div class="login pale-green" id="loginBlock">
+            <h2>Login</h2>
+            <p>Log in to your account and explore our platform!</p>
+            <form method="post" action="{% url 'users:login' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Login</button>
+                <input type="hidden" name="next" value="{% url 'languages:index' %}" />
+            </form>
+            <a style="margin-top: 5px;" href="{% url 'users:register' %}">Нет аккаунта?</a>
+        </div>
+    </div>
+</body>
+
+</html>
+{% endblock content %}

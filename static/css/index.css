@@ -1,0 +1,86 @@
+body {
+    color: white;
+    margin: 0;
+}
+
+
+.footer {
+    background-color: rgba(0, 0, 0, 0.5); color: white; padding: 20px;
+    color: white;
+    padding: 10px;
+}
+
+
+@keyframes blinkAndScale {
+  0%, 100% {
+    transform: scale(1); /* начальный и конечный размер текста */
+    color: black; /* начальный цвет текста */
+    font: bold;
+  }
+  50% {
+    transform: scale(1.1); /* промежуточный размер текста */
+    color: yellow; /* промежуточный цвет текста */
+    font: bold;
+  }
+}
+
+.blinking-text {
+  animation: blinkAndScale 3s infinite; /* 2s - время одного цикла анимации, infinite - бесконечное повторение */
+}
+
+
+/* ALL FOR CAPTION */
+@import url('https://fonts.cdnfonts.com/css/robot');
+        #slideShow {
+            max-width: 600px;
+            max-height: 600px;
+            transition: opacity 1s ease-in-out;
+
+
+        .caption {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+            background-color: #3498db; /* Цвет фона */
+            color: #fff; /* Цвет текста */
+            padding: 10px 20px; /* Внутренние отступы */
+            border-radius: 5px; /* Скругление углов */
+            font-size: 30px;
+        }
+
+        .caption-container:hover #caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+@import url('https://fonts.cdnfonts.com/css/robot');
+        #slideShow {
+            max-width: 600px;
+            max-height: 600px;
+            transition: opacity 1s ease-in-out;
+
+        .caption-container {
+            text-align: center;
+            margin-top: 10px;
+            position: relative;
+            background-color: yellow;
+        }
+
+        .caption {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+            background-color: #3498db; /* Цвет фона */
+            color: #fff; /* Цвет текста */
+            padding: 10px 20px; /* Внутренние отступы */
+            border-radius: 5px; /* Скругление углов */
+            font-size: 30px;
+        }
+
+        .caption-container:hover #caption {
+            opacity: 1;
+            transform: translateY(0);
+        }

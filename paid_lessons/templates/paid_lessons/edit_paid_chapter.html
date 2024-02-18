@@ -1,0 +1,67 @@
+{% extends 'languages/base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            background-color: #f8f9fa; /* Цвет фона страницы */
+            font-family: Arial, sans-serif; /* Шрифт текста */
+            margin: 0;
+        }
+
+        form {
+            max-width: 600px; /* Максимальная ширина формы */
+            margin: auto; /* Центрирование формы по горизонтали */
+            background-color: #ffffff; /* Цвет фона формы */
+            padding: 20px; /* Внутренние отступы формы */
+            border: 1px solid #ced4da; /* Рамка вокруг формы */
+            border-radius: 8px; /* Скругление углов формы */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень формы */
+        }
+
+        label {
+            display: block; /* Каждая метка на новой строке */
+            margin-bottom: 8px; /* Отступ между метками */
+            font-weight: bold; /* Жирный текст метки */
+        }
+
+        input, textarea {
+            width: 100%; /* Занимать всю доступную ширину */
+            padding: 8px; /* Внутренние отступы вокруг инпутов и текстового поля */
+            margin-bottom: 16px; /* Отступ между инпутами и текстовыми полями */
+            border: 1px solid #ced4da; /* Рамка вокруг инпутов и текстовых полей */
+            border-radius: 4px; /* Скругление углов инпутов и текстовых полей */
+            box-sizing: border-box; /* Учитывать рамку и внутренние отступы в общей ширине */
+        }
+
+        button {
+            background-color: #007bff; /* Цвет фона кнопки */
+            color: #ffffff; /* Цвет текста кнопки */
+            padding: 10px 20px; /* Внутренние отступы кнопки */
+            border: none; /* Убираем границу кнопки */
+            border-radius: 4px; /* Скругление углов кнопки */
+            cursor: pointer; /* Замена курсора при наведении */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Цвет фона кнопки при наведении */
+        }
+    </style>
+</head>
+<body>
+    <form action="{% url 'paid_lessons:edit_paid_chapter' chapter.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Сохранить</button>
+    </form>
+</body>
+</html>
+<br>
+<br>
+<br>
+<br>
+<br>
+{% endblock content %}

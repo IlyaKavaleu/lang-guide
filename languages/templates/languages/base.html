@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Website</title>
+    <link rel="stylesheet" href="{% static 'css/styles_main.css' %}">
+</head>
+{% include 'languages/header__BASE.html '%}
+{% block content %}
+{% endblock content %}
+
+    <footer style="background-color: black;">
+        <p>&copy; 2023 Your Website Name</p>
+    </footer>
+</body>
+</html>

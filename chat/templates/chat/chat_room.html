@@ -1,0 +1,239 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/static/image/super_font.jpg');
+        }
+
+        .chat-container {
+            max-height: 555px;
+            max-width: 600px;
+            margin: 50px auto;
+            margin-top: 0px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 2px solid #ccc;
+        }
+
+        .chat-header {
+            background-image: url('/static/image/super_font.jpg');
+            background-size: cover; /* Добавление стиля для подгонки изображения */
+            color: #fff;
+            padding: 20px; /* Увеличение отступа */
+            text-align: center;
+        }
+
+        .chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .message {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            background-color: #e2f7cb;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            margin-left: 5px;
+            overflow-wrap: break-word;
+        }
+
+        .user-message img {
+            border-radius: 50%;
+            margin-right: 10px; /* Расстояние между изображением и текстом */
+            margin-left: 10px; /* Дополнительный отступ с левой стороны изображения */
+        }
+
+        .chat-input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+            border: none; /* Убираем боковые границы */
+            border-radius: 4px;
+            background-color: #f0f0f0; /* Добавляем фоновый цвет для различия с фоном страницы */
+            width: 70%;
+            margin-right: 10px;
+            font-size: 14px;
+            outline: none; /* Убираем обводку при фокусе (необязательно) */
+        }
+
+        input:focus {
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Добавляем тень при фокусе (необязательно) */
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .add-comment-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .add-comment-title {
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+    <title>Stylish Chat</title>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2 style="color: white;">Chat Messages</h2>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            {% for message in messages %}
+                <div class="message">
+                    {% if message.user.image %}
+                        <img src="{{ message.user.image.url }}" width="30px;" height="30px;" style="border-radius: 50%; margin-left: 10px;">
+                        {{ message.user.username }}
+                    {% else %}
+                        <img src="{% static 'image/user_account/default_avatar.jpg' %}" width="30px;" height="30px;">
+                        {{ message.user.username }}
+                    {% endif %}
+
+                    <div class="user-message">
+                        <p><strong>{{ message.content }}</strong></p>
+                        <span class="time-left" style="margin-left: 5px; font-size: 12px;">{{ message.timestamp }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="add-comment-section add-comment-title">
+           <div class="add-comment-section add-comment-title">
+                <form method="post" action="{% url 'chat:chat_room' %}" id="chat-form">
+                    {% csrf_token %}
+                    <input type="text" id="id_content" name="content" placeholder="Type your message here" autocomplete="off">
+                    <button type="button" onclick="sendMessage()">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<!-- Добавьте этот скрипт после стилизации в вашем HTML-коде -->
+<script>
+    var currentUserImage = "{{ request.user.image.url }}";
+    var currentUsername = "{{ request.user.username }}";
+
+    // Инициализация WebSocket
+    var socket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+    // Отправка сообщения через WebSocket
+    function sendMessage() {
+    var messageInput = document.getElementById('id_content');
+    var chatMessages = document.getElementById('chat-messages');
+
+    var messageText = messageInput.value.trim();
+    if (messageText === '') return;
+
+    var messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+
+    var userMessage = document.createElement('div');
+    userMessage.classList.add('user-message');
+    userMessage.innerHTML = `<img src="${currentUserImage}" width="30px;" height="30px;" style="border-radius: 50%; margin-left: 10px;">${currentUsername}: <strong>${messageText}</strong>`;
+
+    messageElement.appendChild(userMessage);
+    chatMessages.appendChild(messageElement);
+
+    // Отправка сообщения через WebSocket
+    socket.send(JSON.stringify({
+        'message': messageText
+    }));
+
+    // Прокручиваем вниз
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Simulate a bot response (you can replace this with actual backend logic)
+    setTimeout(function() {
+        var botMessage = document.createElement('div');
+        botMessage.classList.add('message', 'bot-message');
+        botMessage.textContent = 'This is a bot response.';
+        chatMessages.appendChild(botMessage);
+
+        // Прокручиваем вниз после добавления сообщения от бота
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 1000);
+
+    messageInput.value = '';
+}
+
+
+    // Обработка полученных сообщений через WebSocket
+    socket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        var messageText = data['message'];
+
+        var messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+
+        var userMessage = document.createElement('div');
+        userMessage.classList.add('user-message');
+        userMessage.innerHTML = `<img src="${currentUserImage}" width="30px;" height="30px;" style="border-radius: 50%; margin-left: 10px;">${currentUsername}: <strong>${messageText}</strong>`;
+
+        messageElement.appendChild(userMessage);
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    // После загрузки контента
+document.addEventListener('DOMContentLoaded', function() {
+    var chatMessages = document.getElementById('chat-messages');
+
+    // Прокрутить вниз после загрузки контента
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+});
+
+// После каждого добавления сообщения
+chatMessages.scrollTop = chatMessages.scrollHeight;
+
+// В обработчике события прокрутки (например, если пользователь прокрутил вверх)
+chatMessages.addEventListener('scroll', function() {
+    // Если пользователь не прокрутил вверх (достигнут конец контейнера)
+    if (chatMessages.scrollTop === chatMessages.scrollHeight - chatMessages.clientHeight) {
+        // Прокрутить вниз
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+});
+
+</script>
+</body>
+</html>
+{% endblock content %}

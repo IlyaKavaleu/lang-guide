@@ -1,0 +1,69 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .delete-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
+<body style="background-image: url('/static/image/super_font.jpg');">
+<div style="text-align: center;">
+    {% for paid_lesson in paid_lessons %}
+        {% if request.user != paid_lesson.teacher %}
+            <a href="{% url 'paid_lessons:show_lesson' paid_lesson.id %}">
+            <div style="background-color: white; padding: 20px; margin-bottom: 20px; display: inline-block;
+                padding: 10px 20px; margin-top: 30px; border-radius: 10px; height: 520px;">
+                <h2>{{ paid_lesson.title }}</h2>
+                <p><strong>Price:</strong> ${{ paid_lesson.price }}</p>
+                <p><strong>Duration:</strong> {{ paid_lesson.duration }}</p>
+                <p><strong>Add to card:</strong> {{ paid_lesson.duration }}</p>
+                <p><a href="{% url 'paid_card:add_to_paid_card' paid_lesson.id %}"><strong>Добавить в корзину</strong></a></p>
+
+                    {% if paid_lesson.video_url %}
+                        <video width="320" height="240" controls>
+                            <source src="{{ lesson.video_url.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% else %}
+                        <p>No video file associated with this lesson.</p>
+                    {% endif %}
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        text-align: center;
+                        justify-content: center;
+                        margin-top: 15px;
+                        background-color: #FFD700;
+                        padding: 10px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    ">
+                        <strong style="margin-right: 10px; font-size: 16px; color: #333;">Teacher: {{ paid_lesson.teacher.first_name }}</strong>
+                        {% if not paid_lesson.teacher.image %}
+                            <img src="{% static 'image/user_account/default_avatar.jpg' %}" width="35px" height="35px" style="border-radius: 50%;">
+                        {% else %}
+                            <img src="{{ paid_lesson.teacher.image.url }}" width="35px" height="35px" style="border-radius: 50%;">
+                        {% endif %}
+                    </div>
+            </div>
+        </a>
+        {% endif %}
+    {% endfor %}
+</div>
+</body>
+</html>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+{% endblock content %}

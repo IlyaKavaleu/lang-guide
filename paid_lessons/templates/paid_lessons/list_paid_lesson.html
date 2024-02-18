@@ -1,0 +1,97 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .lesson-block {
+        background-color: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 10px;
+        border-radius: 10px;
+        position: relative;
+        width: 320px;  /* Укажите желаемую ширину блока */
+        height: 500px;
+    }
+
+    .delete-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .container {
+        display: flex;
+        justify-content: flex-end;
+        padding: 20px;
+        background-color: none;
+    }
+
+    .add-course {
+        text-decoration: none;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+    }
+
+     .custom-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #4CAF50; /* Здесь можно использовать любой цвет для фона */
+        color: white; /* Цвет текста */
+        border-radius: 5px; /* Закругление углов */
+        border: none;
+        cursor: pointer;
+    }
+
+    .custom-button:hover {
+        background-color: #45a049; /* Измененный цвет фона при наведении */
+    }
+</style>
+<body style="background-image: url('/static/image/super_font.jpg');">
+    <div class="container">
+        <a class="add-course" href="{% url 'paid_lessons:add_lesson' user.id %}">Добавить курс</a>
+    </div>
+
+<div style="text-align: center; margin-top: -50px;">
+    {% for lesson in lessons %}
+        <div class="lesson-block">
+            <a href="{% url 'paid_lessons:delete_lesson' lesson.id %}" class="delete-button">
+                <img src="{% static 'image/close_logo.png' %}" width="40px" height="30px;">
+            </a>
+
+            <h2>{{ lesson.title }}</h2>
+            <p><strong>Description:</strong> {{ lesson.description|slice:50 }}...</p>
+            <p><strong>Price:</strong> ${{ lesson.price }}</p>
+            <p><strong>Duration:</strong> {{ lesson.duration }}</p>
+
+            {% if lesson.video_url %}
+                <video width="320" height="240" controls>
+                    <source src="{{ lesson.video_url.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% else %}
+                <p>No video file associated with this lesson.</p>
+            {% endif %}
+
+            <p><a href="{% url 'paid_lessons:show_lesson' lesson.id %}" class="custom-button">Начать обучение</a></p>
+            <p><a href="{% url 'paid_lessons:edit_paid_lesson' lesson.id %}">Редактировать курс</a></p>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>
+<br>
+<br>
+<br>
+{% endblock content %}

@@ -1,0 +1,74 @@
+{% extends 'languages/base.html' %}
+{% load static %}
+
+{% block content %}
+  <head>
+    <style>
+      body {
+        background-image: url('/static/image/super_font.jpg');
+        background-size: cover;
+        background-position: center;
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif; /* измените на свой выбор */
+      }
+
+      .container {
+        width: 80%;
+        margin: 50px auto;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .block {
+        width: 30%;
+        box-sizing: border-box;
+        display: inline-block;
+        margin: 1%;
+        background-color: #f2f2f2;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        transition: background-color 0.3s ease;
+      }
+
+      .block:hover {
+        background-color: #e0e0e0;
+      }
+
+      h1 {
+        color: #fff;
+        text-align: center;
+      }
+
+      img {
+        border-radius: 50%;
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 style="color: black;">Все преподаватели</h1>
+      {% for user in users %}
+        <a href="{% url 'users:teacher_and_lessons' user.id %}">
+          <div class="block">
+            Имя: <strong>{{ user.username }}</strong><br>
+            Страна: <strong>{{ user.country }}</strong><br>
+            Город: <strong>{{ user.city }}</strong><br>
+            {% if user.image %}
+              <img src="{{ user.image.url }}" width="80px" height="80px" alt="{{ user.username }} Avatar">
+            {% else %}
+              <img src="{% static 'image/user_account/default_avatar.jpg' %}" width="80px" height="80px" alt="Default Avatar">
+            {% endif %}
+            <h3>Посмотреть курсы данного преподавателя</h3>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </body>
+
+{% endblock %}
